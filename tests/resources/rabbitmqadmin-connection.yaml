@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: test-cluster1-secret
+  namespace: default
+type: Opaque
+stringData:
+  username: "rabbitmq_user"
+  password: "rabbitmq_pass"
+---
+apiVersion: rabbitmq-admin.io/v1alpha1
+kind: GlobalConnection
+metadata:
+  name: test-cluster1
+spec:
+  https: false
+  host: 192.168.0.114:15672
+  skipTLSVerification: false
+  login:
+    valueFrom:
+      secretKeyRef:
+        key: username
+        name: test-cluster1-secret
+  password:
+    valueFrom:
+      secretKeyRef:
+        key: password
+        name: test-cluster1-secret
+#status:
+#  conditions:
+#    - type: Ready
+#      status: ture
+#      lastUpdatedTime: 'foo-bar'
+#      reason: 'Connected'
+#      message: "Api check success"
+#  info:
+#    clusterName: 'rabbit@rabbitmq1'
+#    rabbitmqVersion: '3.13.6'

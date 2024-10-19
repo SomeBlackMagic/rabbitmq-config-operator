@@ -1,0 +1,38 @@
+apiVersion: rabbitmq-admin.io/v1alpha1
+kind: MixedConfig
+metadata:
+  name: test-item1
+  namespace: rabbitmq-admin-operator
+spec:
+  globalClustersRefs:
+    - foo
+    - bar
+    - baz
+  users:
+    - name: foo
+      password: 'bar'
+      canLoginWithPassword: true # optional default true
+      tags: '' # Admin | Monitoring | Policymaker Management | Impersonator | None  # optional default empty
+      permissions:
+        - vhost: foo
+          readRegexp: '.*' # optional default .*
+          writeRegexp: '.*' # optional default .*
+          configureRegexp: '.*' # optional default .*
+      topicPermissions:
+        - vhost: foo
+          exchange: ''
+          readRegexp: '.*' # optional default .*
+          writeRegexp: '.*' # optional default .*
+  vhosts:
+    - name: foo
+      description: "bar" # optional
+      tags: '' # optional default empty
+      defaultQueueType: 'classic' # or quorum or stream
+
+status:
+  conditions:
+    - type: Ready
+      status: ture
+      lastUpdatedTime: 'foo-bar'
+      reason: 'Processed'
+      message: "Api check success"

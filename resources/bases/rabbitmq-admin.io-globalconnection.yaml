@@ -1,0 +1,118 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: globalconnections.rabbitmq-admin.io
+spec:
+  group: rabbitmq-admin.io
+  names:
+    kind: GlobalConnection
+    plural: globalconnections
+    singular: globalconnection
+    shortNames:
+      - gc
+  scope: Cluster
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+            - status
+          properties:
+            spec:
+              type: object
+              properties:
+                https:
+                  type: boolean
+                  description: "Use HTTPS for connection"
+                  default: true
+                host:
+                  type: string
+                  description: "The RabbitMQ management API host and port"
+                skipTLSVerification:
+                  type: boolean
+                  description: "Whether to skip TLS verification"
+                  default: false
+                login:
+                  type: object
+                  properties:
+                    valueFrom:
+                      type: object
+                      properties:
+                        secretKeyRef:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                password:
+                  type: object
+                  properties:
+                    valueFrom:
+                      type: object
+                      properties:
+                        secretKeyRef:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+
+                fullControl:
+                  type: boolean
+                  description: "Indicates if full control of rabbitmq for operator(remove other params on apply)"
+                  default: false
+                applyInterval:
+                  type: number
+                  description: "interval tome for apply changes"
+                  default: 60
+
+              required:
+                - host
+                - login
+                - password
+            status:
+              type: object
+              properties:
+                conditions:
+                  type: array
+                  description: "Array of condition objects"
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      status:
+                        type: string
+                      lastUpdatedTime:
+                        type: string
+                      reason:
+                        type: string
+                      message:
+                        type: string
+                  default: []
+                info:
+                  type: object
+                  description: "Optional info about the RabbitMQ cluster"
+                  properties:
+                    clusterName:
+                      type: string
+                    rabbitmqVersion:
+                      type: string
+      additionalPrinterColumns:
+        - name: ClusterName
+          type: string
+          jsonPath: .status.info.clusterName
+        - name: RabbitMQVersion
+          type: string
+          jsonPath: .status.info.rabbitmqVersion
+        - name: Ready
+          type: string
+          jsonPath: .status.conditions[?(@.type=="Ready")].status
+      subresources:
+        status: {}

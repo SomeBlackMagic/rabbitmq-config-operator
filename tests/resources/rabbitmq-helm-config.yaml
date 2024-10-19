@@ -1,0 +1,46 @@
+# https://github.com/bitnami/charts/blob/main/bitnami/rabbitmq/values.yaml
+
+## @param plugins List of default plugins to enable (should only be altered to remove defaults; for additional plugins use `extraPlugins`)
+##
+plugins: "rabbitmq_management rabbitmq_peer_discovery_k8s rabbitmq_shovel rabbitmq_shovel_management rabbitmq_prometheus rabbitmq_delayed_message_exchange"
+
+#ulimitNofiles: "65535"
+
+#image:
+#  registry: docker.io
+#  repository: bitnami/rabbitmq
+#  tag: 3.11.19
+
+auth:
+  username: rabbitmq_user
+  password: rabbitmq_pass
+  erlangCookie: SWQOKODSQALRPCLNMEQG
+clustering:
+  enabled: false
+rbac:
+  create: false
+persistence:
+  enabled: true
+  size: 1Gi
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 120
+  timeoutSeconds: 20
+  periodSeconds: 30
+  failureThreshold: 6
+  successThreshold: 1
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  timeoutSeconds: 20
+  periodSeconds: 5
+  failureThreshold: 60
+  successThreshold: 1
+
+
+initScripts:
+  download_rabbitmq_delayed_message_exchange.sh: |
+    #!/bin/sh
+    curl -L https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/3.11.1/rabbitmq_delayed_message_exchange-3.11.1.ez --output /opt/bitnami/rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.11.1.ez

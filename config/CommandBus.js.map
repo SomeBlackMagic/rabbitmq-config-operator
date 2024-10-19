@@ -1,0 +1,1 @@
+{"version":3,"file":"CommandBus.js","sourceRoot":"","sources":["CommandBus.ts"],"names":[],"mappings":";;;AAAA,wIAAwG;AACxG,uCAAmC;AAEnC,MAAqB,gBAAgB;IAC1B,MAAM,CAAC,WAAW;QACrB,OAAO;YACH,oBAAS,CAAC,OAAO,CAAC,gCAAsB,CAAC;SAC5C,CAAA;IACL,CAAC;CACJ;AAND,mCAMC"}

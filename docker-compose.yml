@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .docker/local.Dockerfile
+    stop_signal: INT
+    user: 1000:1000
+    working_dir: /app
+    tty: true
+    volumes:
+      - ./:/app:rw
+#    env_file:
+#      - .env
+  
+  rabbitmq:
+    hostname: rabbitmq
+    build:
+      context: .docker/rabbitmq
+      args:
+        IMAGE_VERSION: 3.11.6-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - .docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/conf.d/docker.conf:ro
+      - .docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - rabbitmq_data:/bitnami/rabbitmq/mnesia
+    environment:
+      RABBITMQ_ERLANG_COOKIE: SWQOKODSQALRPCLNMEQG
+      RABBITMQ_DEFAULT_USER: rabbitmq_user
+      RABBITMQ_DEFAULT_PASS: rabbitmq_pass
+      RABBITMQ_DEFAULT_VHOST: /
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  rabbitmq_data:
